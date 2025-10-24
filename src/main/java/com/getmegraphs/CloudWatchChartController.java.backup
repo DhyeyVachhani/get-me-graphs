@@ -1,0 +1,201 @@
+package com.getmegraphs;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+    private static final Logger logger = LoggerFactory.getLogger(CloudWatchChartController.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(CloudWatchChartController.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(CloudWatchChartController.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(CloudWatchChartController.class);
+
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+    private static final Logger logger = LoggerFactory.getLogger(CloudWatchChartController.class);
+
+
+@RestController
+    private static final Logger logger = LoggerFactory.getLogger(CloudWatchChartController.class);
+
+@RequestMapping("/cloudwatch")
+            logger.error("Error exporting charts for DB instance: {}", dbInstanceIdentifier, e);
+    private static final Logger logger = LoggerFactory.getLogger(CloudWatchChartController.class);
+            logger.error("Error exporting charts for DB instance: {}", dbInstanceIdentifier, e);
+    private final CloudWatchChartService chartService;
+            logger.error("Error exporting charts for DB instance: {}", dbInstanceIdentifier, e);
+    public CloudWatchChartController(CloudWatchChartService chartService) {
+            logger.error("Error exporting charts for DB instance: {}", dbInstanceIdentifier, e);
+    }
+            logger.error("Error exporting charts for DB instance: {}", dbInstanceIdentifier, e);
+    @PostMapping("/export")
+    public String exportCharts(
+            @RequestParam String dbInstanceIdentifier,
+            logger.error("Error exporting charts for DB instance: {}", dbInstanceIdentifier, e);
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+    ) {
+        try {
+            logger.error("Error exporting charts for DB instance: {}", dbInstanceIdentifier, e);
+            chartService.plotAndSaveMetric(dbInstanceIdentifier, "FreeableMemory", startTime, endTime, "Freeable Memory (MB)", "freeable_memory.png");
+            return "Charts exported successfully!";
+        } catch (Exception e) {
+            logger.error("Error exporting charts for DB instance: {}", dbInstanceIdentifier, e);
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @PostMapping("/export/database-connections")
+    public String exportDatabaseConnectionsChart(
+            @RequestParam String dbInstanceIdentifier,
+            @RequestParam String startTime, // ISO 8601, e.g. 2024-06-01T00:00:00Z
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+    ) {
+        try {
+            chartService.plotAndSaveMetric(dbInstanceIdentifier, "DatabaseConnections", startTime, endTime, "Database Connections (Count)", "database_connections.png");
+            return "Database connections chart exported successfully!";
+        } catch (Exception e) {
+            logger.error("Error exporting database connections chart for DB instance: {}", dbInstanceIdentifier, e);
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @PostMapping("/export/kafka-consumer-lag")
+    public String exportKafkaConsumerLagChart(
+            @RequestParam String clusterName,
+            @RequestParam String consumerGroup,
+            @RequestParam String topic,
+            @RequestParam String startTime, // ISO 8601, e.g. 2024-06-01T00:00:00Z
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+    ) {
+            logger.error("Error exporting Kafka consumer lag chart for cluster: {}, consumerGroup: {}, topic: {}", clusterName, consumerGroup, topic, e);
+            chartService.plotAndSaveKafkaMetric(clusterName, consumerGroup, topic, "ConsumerLag", startTime, endTime, "Consumer Lag (Messages)", "kafka_consumer_lag.png");
+            return "Kafka consumer lag chart exported successfully!";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    }
+
+
+    @PostMapping("/export/kafka-cpu-usage-by-broker")
+    public String exportKafkaCpuUsageByBrokerChart(
+            logger.error("Error exporting Kafka CPU usage by broker chart for cluster: {}", clusterName, e);
+            @RequestParam String startTime, // ISO 8601, e.g. 2024-06-01T00:00:00Z
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+    ) {
+        try {
+            chartService.plotAndSaveKafkaBrokerMetric(clusterName, "CpuSystem", startTime, endTime, "CPU Usage (%)", "kafka_cpu_usage_by_broker.png");
+            return "Kafka CPU usage by broker chart exported successfully!";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @PostMapping("/export/comprehensive-report")
+    public String exportComprehensiveReport(
+            @RequestParam(required = false) String clusterName,    // For Kafka metrics
+            @RequestParam(required = false) String dbInstanceIdentifier, // For RDS metrics
+            @RequestParam String startTime, // ISO 8601, e.g. 2024-06-01T00:00:00Z
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+            logger.error("Error exporting database Read IOPS chart for DB instance: {}", dbInstanceIdentifier, e);
+        try {
+            logger.error("Error exporting database Read IOPS chart for DB instance: {}", dbInstanceIdentifier, e);
+            return "Comprehensive report generated successfully at: " + reportPath;
+            logger.error("Error exporting database Read IOPS chart for DB instance: {}", dbInstanceIdentifier, e);
+            e.printStackTrace();
+            logger.error("Error exporting database Read IOPS chart for DB instance: {}", dbInstanceIdentifier, e);
+        }
+    }
+
+    @PostMapping("/export/database-read-iops")
+    public String exportDatabaseReadIOPSChart(
+            @RequestParam String dbInstanceIdentifier,
+            @RequestParam String startTime, // ISO 8601, e.g. 2024-06-01T00:00:00Z
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+    ) {
+        try {
+            chartService.plotAndSaveMetric(dbInstanceIdentifier, "WriteIOPS", startTime, endTime, "Write IOPS (Operations/Second)", "database_write_iops.png");
+            return "Database Write IOPS chart exported successfully!";
+        } catch (Exception e) {
+            logger.error("Error exporting database Write IOPS chart for DB instance: {}", dbInstanceIdentifier, e);
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @PostMapping("/export/comprehensive-pdf-report")
+    public String exportDatabaseWriteIOPSChart(
+            @RequestParam String dbInstanceIdentifier,
+            @RequestParam String startTime, // ISO 8601, e.g. 2024-06-01T00:00:00Z
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+    ) {
+        try {
+            chartService.plotAndSaveMetric(dbInstanceIdentifier, "WriteIOPS", startTime, endTime, "Write IOPS (Operations/Second)", "database_write_iops.png");
+            return "Database Write IOPS chart exported successfully!";
+        } catch (Exception e) {
+            logger.error("Error exporting database Write IOPS chart for DB instance: {}", dbInstanceIdentifier, e);
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @PostMapping("/export/comprehensive-pdf-report")
+    public String exportComprehensivePDFReport(
+            @RequestParam(required = false) String clusterName,    // For Kafka metrics
+            @RequestParam(required = false) String dbInstanceIdentifier, // For RDS metrics
+            @RequestParam String startTime, // ISO 8601, e.g. 2024-06-01T00:00:00Z
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+    ) {
+        try {
+            String pdfPath = chartService.generatePDFReport(clusterName, dbInstanceIdentifier, startTime, endTime);
+            return "Comprehensive PDF report generated successfully at: " + pdfPath;
+        } catch (Exception e) {
+            logger.error("Error generating comprehensive PDF report for cluster: {}, DB instance: {}", clusterName, dbInstanceIdentifier, e);
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @PostMapping("/export/kafka-lag")
+    public String exportKafkaLag(
+            @RequestParam String clusterName,
+            @RequestParam String startTime, // ISO 8601, e.g. 2024-06-01T00:00:00Z
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+    ) {
+        try {
+            String outputFileName = "kafka_lag_" + clusterName.replaceAll("[^a-zA-Z0-9]", "_") + ".png";
+            chartService.plotAndSaveKafkaLagLimited(clusterName, startTime, endTime, outputFileName);
+            return "Kafka lag charts (SumOffsetLag & MaxOffsetLag) for 3 consumer groups exported successfully. Check files: " +
+                   "kafka_lag_" + clusterName.replaceAll("[^a-zA-Z0-9]", "_") + "_worker.png, " +
+                   "kafka_lag_" + clusterName.replaceAll("[^a-zA-Z0-9]", "_") + "_notify.png, " +
+                   "kafka_lag_" + clusterName.replaceAll("[^a-zA-Z0-9]", "_") + "_async_notify.png";
+        } catch (Exception e) {
+            logger.error("Error exporting Kafka lag charts for cluster: {}", clusterName, e);
+            return "Error: " + e.getMessage();
+        }
+    }
+
+    @PostMapping("/export/kafka-time-lag")
+    public String exportKafkaTimeLag(
+            @RequestParam String clusterName,
+            @RequestParam String startTime, // ISO 8601, e.g. 2024-06-01T00:00:00Z
+            @RequestParam String endTime    // ISO 8601, e.g. 2024-06-01T23:59:59Z
+    ) {
+        try {
+            String outputFileName = "kafka_time_lag_" + clusterName.replaceAll("[^a-zA-Z0-9]", "_") + ".png";
+            logger.error("Error exporting Kafka time lag charts for cluster: {}", clusterName, e);
+            return "Kafka time-based lag charts (RollingEstimatedTimeLagMax & EstimatedMaxTimeLag) for 3 consumer groups exported successfully. Check files: " +
+                   "kafka_time_lag_" + clusterName.replaceAll("[^a-zA-Z0-9]", "_") + "_worker.png, " +
+                   "kafka_time_lag_" + clusterName.replaceAll("[^a-zA-Z0-9]", "_") + "_notify.png, " +
+                   "kafka_time_lag_" + clusterName.replaceAll("[^a-zA-Z0-9]", "_") + "_async_notify.png";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error: " + e.getMessage();
+        }
+    }
+
+}
