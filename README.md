@@ -9,10 +9,6 @@ Get Me Graphs is a Spring Boot (Java 17) application that automates:
 6. Automatic extraction, compilation, and execution of AI‑generated Java visualization code.
 
 ---
-## Why This Project
-Recruiters and engineering teams can quickly evaluate experience across AWS SDK, time-series visualization, PDF composition, AI workflow integration, and runtime code generation/automation.
-
----
 ## Key Features
 - AWS CloudWatch integration (Kafka consumer lag, Kafka broker CPU, RDS CPU, memory, DB connections, IOPS).
 - Auto-discovery of Kafka topics, consumer groups, and brokers.
@@ -237,5 +233,5 @@ Open to improvements: PRs for tests, performance enhancements, or new metric typ
 
 ---
 ## Contact
-For questions or collaboration opportunities: YOUR_EMAIL or LinkedIn/GitHub profile.
+For questions or collaboration opportunities: dhyey.svachhani@gmail.com or https://www.linkedin.com/in/dhyey-vachhani/
 
