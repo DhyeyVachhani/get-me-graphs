@@ -188,28 +188,11 @@ In `application.properties` (copy from sample):
 | Memory pressure | Limit metrics window or add pagination in future iteration. |
 
 ---
-## Recruiter Highlights
-- AWS SDK v2 dynamic dimension discovery (topics, brokers, consumer groups).
-- Time-series visualization with professional styling & PDF reporting.
-- AI workflow integration and runtime code generation/execution pipeline.
-- Clear separation of concerns; production-ready error handling patterns.
-- Demonstrates ability to blend observability, data analysis, and developer tooling.
-
----
 ## Suggested Future Improvements
 - Switch generated code to load JSON from file instead of embedding large strings.
 - Add test harness for `extractAndSaveJavaCode` to validate various AI response shapes.
 - Implement metrics caching & batching to reduce AWS API calls.
 - Graceful degradation when certain AWS namespaces are unavailable.
-
----
-## License
-Add a LICENSE file (recommended: MIT):
-```
-MIT License (c) 2025 YOUR NAME
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction...
-```
-(Replace with full MIT text.)
 
 ---
 ## Quick Command Reference

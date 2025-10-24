@@ -230,126 +230,123 @@ public class AIAnalysisService {
 
     private void extractAndSaveJavaCode(String aiResponse, String reportDir, String vectorData) {
         try {
-            String[] markers = {"```java", "```Java"};
+            // Look for Java code blocks in the AI response
+            String[] javaMarkers = {"```java", "```Java"};
             String javaCode = null;
-            for (String marker : markers) {
-                int start = aiResponse.indexOf(marker);
-                if (start != -1) {
-                    start += marker.length();
-                    int end = aiResponse.indexOf("```", start);
-                    if (end != -1) {
-                        javaCode = aiResponse.substring(start, end).trim();
+
+            for (String marker : javaMarkers) {
+                int startIndex = aiResponse.indexOf(marker);
+                if (startIndex != -1) {
+                    startIndex += marker.length();
+                    int endIndex = aiResponse.indexOf("```", startIndex);
+                    if (endIndex != -1) {
+                        javaCode = aiResponse.substring(startIndex, endIndex).trim();
                         break;
                     }
                 }
             }
-            if (javaCode == null || javaCode.isEmpty()) {
+
+            if (javaCode != null && !javaCode.isEmpty()) {
+                // Create the Java source file
+                String javaFileName = reportDir + "/StabilityAnalysisVisualization.java";
+
+                // Add imports and JSON data to the Java code
+                String completeJavaCode = "// AI-Generated Stability Analysis Visualization Program\n" +
+                                        "// Generated from CloudWatch metrics vector data\n\n" +
+                                        "import org.jfree.chart.*;\n" +
+                                        "import org.jfree.chart.plot.*;\n" +
+                                        "import org.jfree.data.time.*;\n" +
+                                        "import org.jfree.data.xy.*;\n" +
+                                        "import com.fasterxml.jackson.databind.*;\n" +
+                                        "import java.io.*;\n" +
+                                        "import java.text.*;\n" +
+                                        "import java.util.*;\n\n" +
+                                        "public class StabilityAnalysisVisualization {\n" +
+                                        "    \n" +
+                                        "    // Vector data from CloudWatch\n" +
+                                        "    private static final String VECTOR_DATA = \"\"\"" +
+                                        vectorData.replace("\"", "\\\"") + "\"\"\";\n\n";
+
+                        logger.info("Java visualization program saved: {}", javaFileName);
+                logger.info("Metrics JSON data saved: {}", completeJavaCode);
+
                 logger.warn("No Java code found in AI response to extract");
-                System.out.println("No Java code found in AI response to extract");
-                return;
-            }
+                System.out.println("Java visualization program saved: " + javaFileName);
 
-            Files.createDirectories(new File(reportDir).toPath());
-            String javaFileName = reportDir + File.separator + "StabilityAnalysisVisualization.java";
+                // Also save just the vector data as a separate JSON file for convenience
+                String jsonFileName = reportDir + "/metrics_data.json";
+                java.nio.file.Files.writeString(java.nio.file.Paths.get(jsonFileName), vectorData);
+            logger.info("Compiling Java visualization program...");
 
-            // Escape vector data for safe embedding in a String literal
-            String escapedVectorData = vectorData
-                    .replace("\\", "\\\\")
-                    .replace("\"", "\\\"")
-                    .replace("\r", "")
-                    .replace("\n", "\\n");
-            String vectorField = "    private static final String VECTOR_DATA = \"" + escapedVectorData + "\";\n\n";
+                // Compile and run the Java program
+                compileAndRunJavaCode(javaFileName, reportDir);
 
-            String imports = "import org.jfree.chart.ChartFactory;\n" +
-                    "import org.jfree.chart.ChartUtils;\n" +
-                    "import org.jfree.chart.JFreeChart;\n" +
-                    "import org.jfree.chart.plot.XYPlot;\n" +
-                    "import org.jfree.data.time.Millisecond;\n" +
-                    "import org.jfree.data.time.TimeSeries;\n" +
-                    "import org.jfree.data.time.TimeSeriesCollection;\n" +
-                    "import com.fasterxml.jackson.databind.JsonNode;\n" +
-                    "import com.fasterxml.jackson.databind.ObjectMapper;\n" +
-                    "import java.io.File;\n" +
-                    "import java.io.IOException;\n" +
-                    "import java.text.SimpleDateFormat;\n" +
-                    "import java.util.Date;\n" +
-                    "import java.util.Iterator;\n" +
-                    "import java.util.TimeZone;\n";
-            String header = "// AI-Generated Stability Analysis Visualization Program\n" +
-                    "// Generated from CloudWatch metrics vector data\n\n" + imports + "\n";
-
-            String completeJavaCode;
-            if (javaCode.contains("class StabilityAnalysisVisualization")) {
-                int classIdx = javaCode.indexOf("class StabilityAnalysisVisualization");
-                int braceIdx = javaCode.indexOf('{', classIdx);
-                if (braceIdx != -1) {
-                    String before = javaCode.substring(0, braceIdx + 1);
-                    String after = javaCode.substring(braceIdx + 1);
-                    completeJavaCode = header + before + "\n" + vectorField + after;
-                } else {
-                    completeJavaCode = header + javaCode + "\n" + vectorField; // fallback if brace not found
-                }
             } else {
-                completeJavaCode = header + "public class StabilityAnalysisVisualization {\n" + vectorField + javaCode + "\n}";
+                System.out.println("No Java code found in AI response to extract");
             }
 
-            Files.writeString(new File(javaFileName).toPath(), completeJavaCode);
-            logger.info("Java visualization program saved: {}", javaFileName);
-            logger.info("Extracted Java code length: {} chars", javaCode.length());
-            System.out.println("Java visualization program saved: " + javaFileName);
-
-            String jsonFileName = reportDir + File.separator + "metrics_data.json";
-            Files.writeString(new File(jsonFileName).toPath(), vectorData);
-            logger.info("Metrics JSON data saved: {}", jsonFileName);
-
-            compileAndRunJavaCode(javaFileName, reportDir);
         } catch (Exception e) {
-            logger.error("Error extracting and saving Java code: {}", e.getMessage(), e);
             System.err.println("Error extracting and saving Java code: " + e.getMessage());
         }
     }
 
     private void compileAndRunJavaCode(String javaFileName, String reportDir) {
         try {
+                logger.info("Running Java visualization program...");
+                logger.info("Java program compiled successfully");
+            // Get the classpath with JFreeChart and Jackson libraries
             String classpath = getClasspath();
-            logger.info("Compiling Java visualization program: {}", javaFileName);
+
+            // Compile the Java file
             ProcessBuilder compileBuilder = new ProcessBuilder(
-                    "javac", "-cp", classpath, javaFileName
+                "javac",
+                "-cp", classpath,
+                javaFileName
             );
-            compileBuilder.redirectErrorStream(true);
+                    logger.info("Generated charts should be in the report directory");
+                    logger.info("Java visualization program executed successfully");
+
             Process compileProcess = compileBuilder.start();
             int compileExitCode = compileProcess.waitFor();
+
+            // Read compilation output
             String compileOutput = readProcessOutput(compileProcess);
-            if (compileExitCode != 0) {
-                logger.error("Compilation failed (exit {}). Output:\n{}", compileExitCode, compileOutput);
+
+            if (compileExitCode == 0) {
+                System.out.println("Java program compiled successfully");
+
+                // Run the compiled Java program
+                System.out.println("Running Java visualization program...");
+
+                ProcessBuilder runBuilder = new ProcessBuilder(
+                    "java",
+                    "-cp", classpath + File.pathSeparator + reportDir,
+                    "StabilityAnalysisVisualization"
+                );
+                runBuilder.directory(new File(reportDir));
+                runBuilder.redirectErrorStream(true);
+
+                Process runProcess = runBuilder.start();
+                int runExitCode = runProcess.waitFor();
+
+                String runOutput = readProcessOutput(runProcess);
+
+                if (runExitCode == 0) {
+                    System.out.println("Java visualization program executed successfully");
+                    System.out.println("Generated charts should be in the report directory");
+                } else {
+                    System.err.println("Error running Java program. Exit code: " + runExitCode);
+                    System.err.println("Output: " + runOutput);
+                }
+
+            } else {
                 System.err.println("Error compiling Java program. Exit code: " + compileExitCode);
                 System.err.println("Compilation output: " + compileOutput);
-                return;
             }
-            logger.info("Java program compiled successfully");
-            System.out.println("Java program compiled successfully");
 
-            logger.info("Running Java visualization program...");
-            ProcessBuilder runBuilder = new ProcessBuilder(
-                    "java", "-cp", classpath + File.pathSeparator + reportDir, "StabilityAnalysisVisualization"
-            );
-            runBuilder.directory(new File(reportDir));
-            runBuilder.redirectErrorStream(true);
-            Process runProcess = runBuilder.start();
-            int runExitCode = runProcess.waitFor();
-            String runOutput = readProcessOutput(runProcess);
-            if (runExitCode == 0) {
-                logger.info("Java visualization program executed successfully");
-                System.out.println("Java visualization program executed successfully");
-                System.out.println("Generated charts should be in the report directory");
-            } else {
-                logger.error("Error running Java program (exit {}). Output:\n{}", runExitCode, runOutput);
-                System.err.println("Error running Java program. Exit code: " + runExitCode);
-                System.err.println("Output: " + runOutput);
-            }
         } catch (Exception e) {
-            logger.error("Error compiling/running Java code: {}", e.getMessage(), e);
             System.err.println("Error compiling/running Java code: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
